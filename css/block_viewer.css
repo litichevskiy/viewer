@@ -1,0 +1,91 @@
+.container_viewer{
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background-image: url(../img/backgraund_block_viewer.png);
+}
+.layer_main{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,39,255,0.4);
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+.main_foto{
+    width: 80%;
+    height: 90%;
+    background: beige;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 250%;
+    color: grey;
+}
+.hide_block{
+    display: none;
+}
+[class^="scroll_"]{
+    position: absolute;
+    z-index: 1;
+    background-color: rgba( 240, 248, 255, 0.9 );
+    opacity: 0;
+    transition: 0.3s;
+    display: flex;
+    font-size: 200%;
+    border-radius: 10px;
+    cursor: pointer;
+}
+[class^="scroll_"]:hover{
+    opacity: 1;
+}
+.scroll_left{
+    top: 20%;
+    left: 2%;
+    width: 10%;
+    height: 60%;
+    align-items: center;
+    justify-content: center;
+}
+.scroll_left:before{
+    content: 'left';
+}
+.scroll_right{
+    top: 20%;
+    right: 2%;
+    width: 10%;
+    height: 60%;
+    align-items: center;
+    justify-content: center;
+}
+.scroll_right:before{
+    content: 'right';
+}
+.scroll_top{
+    top: 2%;
+    right: 20%;
+    width: 60%;
+    height: 15%;
+    align-items: center;
+    justify-content: center;
+}
+.scroll_top:before{
+    content: 'top';
+}
+.scroll_down{
+    bottom: 2%;
+    right: 20%;
+    width: 60%;
+    height: 15%;
+    align-items: center;
+    justify-content: center;
+}
+.scroll_down:before{
+    content: 'down';
+}

@@ -1,0 +1,46 @@
+.container_previe{
+    width: 100vw;
+    height: 100vh;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+.rows_previe{
+    box-sizing: border-box;
+    display: flex;
+    justify-content: space-around;
+}
+.cell_previe{
+    box-sizing : border-box;
+    position: relative;
+    background-color : #FFF;
+    display: inline-block;
+    height: 100%;
+}
+.layer_preview{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba( 128, 128, 128, 0.3 );
+    z-index: 1;
+    cursor: pointer;
+}
+.fake{
+    display: flex;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    font-size: 200%;
+    color: grey;
+    font-family: cursive;
+}
+.active_preview .layer_preview{
+    z-index: -1;
+}
+.active_preview{
+    box-shadow: 0px 4px 0px 0px gold;
+    cursor: pointer;
+}
