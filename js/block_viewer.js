@@ -20,40 +20,25 @@
         $(this.layer).append( this.mainFoto );
         $(this.container).append( this.layer );
         this.flagMainFoto = false;
-        this.leftScroll = new ScrollElement( this.container, 'scroll_left', '&larr;');
-        this.rightScroll = new ScrollElement(this.container, 'scroll_right', '&rarr;');
-        this.topScroll = new ScrollElement(this.container, 'scroll_top', '&uarr;');
-        this.bottomScroll = new ScrollElement(this.container, 'scroll_down', '&darr;');
-
+        this.leftScroll = $('<div class="scroll_left">&lsaquo;</div>');
+        this.rightScroll = $('<div class="scroll_right">&rsaquo;</div>');
+        $(this.container).append( this.leftScroll );
+        $(this.container).append( this.rightScroll );
         this.hideScrollHistory();
 
         var that = this;
 
-        $(this.leftScroll.button).click(function( event ) {
+        $(this.leftScroll).click(function( event ) {
             that.pubsub.publish('last_left',{
                 quantity : that.rows,
                 direct   : DIRECT_LEFT
             });
         });
 
-        $(this.rightScroll.button).click(function( event ) {
+        $(this.rightScroll).click(function( event ) {
             that.pubsub.publish('last_right',{
                 quantity : that.rows,
                 direct   : DIRECT_RIGHT
-            });
-        });
-
-        $(this.topScroll.button).click(function( event ) {
-            that.pubsub.publish('last_up',{
-                quantity : that.cells,
-                direct   : DIRECT_UP
-            });
-        });
-
-        $(this.bottomScroll.button).click(function( event ) {
-            that.pubsub.publish('last_down',{
-                quantity : that.cells,
-                direct   : DIRECT_DOWN
             });
         });
 
@@ -98,26 +83,22 @@
 
     BlockViewer.fn.hideScrollHistory = function() {
 
-        $( this.leftScroll.button ).hide(0);
-        $( this.topScroll.button ).hide(0);
+        $( this.leftScroll ).hide(0);
     };
 
     BlockViewer.fn.showScrollHistory = function() {
 
-        $( this.leftScroll.button ).show(0)
-        $( this.topScroll.button ).show(0)
+        $( this.leftScroll ).show(0)
     };
 
     BlockViewer.fn.hideScrollAdd = function() {
 
-        $( this.bottomScroll.button ).hide(0);
-        $( this.rightScroll.button ).hide(0);
+        $( this.rightScroll ).hide(0);
     };
 
     BlockViewer.fn.showScrollAdd = function() {
 
-        $( this.bottomScroll.button ).show(0);
-        $( this.rightScroll.button ).show(0);
+        $( this.rightScroll ).show(0);
     };
 
     BlockViewer.fn.setCellsAndRows = function( data ) {

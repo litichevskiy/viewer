@@ -77,26 +77,13 @@
             if( data.x > value ){
                 data.x -= 1 ,this.pubsub.publish('active_preview',data);
             }
-            else {
 
-                this.pubsub.publish('last_up', {
-                    quantity : this.cells,
-                    direct   : 'up'
-                });
-            }
         } else
 
             if ( direct === DOWN ) {
 
                 if( data.x < value ) {
                     data.x += 1 ,this.pubsub.publish('active_preview',data);
-                }
-                else{
-
-                    this.pubsub.publish('last_down', {
-                            quantity : this.cells,
-                            direct   : 'down'
-                        });
                 }
             }
             else

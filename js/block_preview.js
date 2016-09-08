@@ -50,8 +50,6 @@
         this.pubsub.subscribe('active_preview', this.changeActivePreview.bind( this ));
         this.pubsub.subscribe('last_left', this.addAndRemoveCells.bind( this ));
         this.pubsub.subscribe('last_right', this.addAndRemoveCells.bind( this ));
-        this.pubsub.subscribe('last_down', this.addAndRemoveRow.bind( this ));
-        this.pubsub.subscribe('last_up', this.addAndRemoveRow.bind( this ));
     };
 
     BlockPreview.fn = BlockPreview.prototype;
@@ -108,66 +106,6 @@
         .fail( function( err ) {
 
         })
-    };
-
-    BlockPreview.fn.addAndRemoveRow = function( data ) {
-        var that = this,
-            elem, From, id, list, cashRow, fromPositinon;
-
-        if( data.direct === 'down' ) {
-
-            From = that.lastID;
-            this.lastID += data.quantity, this.firstID += data.quantity;
-            id = 0, fromPositinon = data.quantity;
-            this.pubsub.publish('history_true');
-
-        } else{
-
-            if( this.firstID <= 0 ) {
-                this.pubsub.publish('history_false');
-                return;
-            }
-
-            this.lastID -= data.quantity, this.firstID -= data.quantity;
-            From = this.firstID;
-            id = data.quantity - 1, fromPositinon = 0;
-            this.pubsub.publish('new_img_true');
-        }
-
-        storageAPI.getData( data.quantity, From )
-        .then( function( response ) {
-
-            response = response || [];
-
-            if( response.length < 1 ) {
-                that.pubsub.publish('new_img_false');
-                return;
-            }
-
-            response.forEach( function( item, i ) {
-
-                elem = createCell.call( that, item );
-
-                that.storageRows[id].replaceChild(elem, that.storageCells[id][i]);
-                that.storageCells[id].splice( i , 1, elem );
-            });
-
-            cashRow = that.container.removeChild( that.storageRows[id] );
-
-            if( data.direct === 'down' ) that.container.appendChild( cashRow )
-            else that.container.insertAdjacentElement( 'afterBegin', cashRow );
-
-            list = that.storageCells.splice( id , 1 );
-            that.storageCells.splice( fromPositinon, 0, list[0] );
-
-            cashRow = that.storageRows.splice( id, 1 );
-            that.storageRows.splice( fromPositinon, 0,  cashRow[0] );
-
-            that.changeActivePreview( that.coordActiveCell );
-        })
-        .fail( function( err ) {
-            ////////////////////// add user info
-        });
     };
 
     BlockPreview.fn.changeActivePreview = function( coord ) {

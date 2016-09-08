@@ -37,46 +37,32 @@
     position: absolute;
     z-index: 1;
     background-color: rgba( 0, 0, 0, 0.4 );
-    opacity: 0;
     transition: 0.3s;
     display: flex;
     font-size: 300%;
     border-radius: 10px;
     cursor: pointer;
     color: gold;
-}
-[class^="scroll_"]:hover{
-    opacity: 1;
+    padding-bottom: 5px;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    -o-user-select: none;
+
 }
 .scroll_left{
-    top: 25%;
+    top: 42.5%;
     left: 2%;
     width: 7%;
-    height: 50%;
+    height: 15%;
     align-items: center;
     justify-content: center;
 }
 .scroll_right{
-    top: 25%;
+    top: 42.5%;
     right: 2%;
     width: 7%;
-    height: 50%;
-    align-items: center;
-    justify-content: center;
-}
-.scroll_top{
-    top: 2%;
-    right: 25%;
-    width: 50%;
-    height: 10%;
-    align-items: center;
-    justify-content: center;
-}
-.scroll_down{
-    bottom: 2%;
-    right: 25%;
-    width: 50%;
-    height: 10%;
+    height: 15%;
     align-items: center;
     justify-content: center;
 }
