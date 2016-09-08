@@ -78,7 +78,7 @@
                 data.x -= 1 ,this.pubsub.publish('active_preview',data);
             }
             else {
-                console.log('UP : get_new_data');
+
                 this.pubsub.publish('last_up', {
                     quantity : this.cells,
                     direct   : 'up'
@@ -92,7 +92,7 @@
                     data.x += 1 ,this.pubsub.publish('active_preview',data);
                 }
                 else{
-                    console.log('DOWN : get_new_data');
+
                     this.pubsub.publish('last_down', {
                             quantity : this.cells,
                             direct   : 'down'
@@ -107,7 +107,7 @@
                         data.y -= 1, this.pubsub.publish('active_preview',data);
                     }
                     else{
-                        console.log('LEFT : get_new_data');
+
                         this.pubsub.publish('last_right', {
                             quantity : this.rows,
                             direct   : 'left'
@@ -122,7 +122,7 @@
                             data.y += 1, this.pubsub.publish('active_preview',data);
                         }
                         else{
-                            console.log('RIGHT : get_new_data');
+
                             this.pubsub.publish('last_left', {
                                 quantity : this.rows,
                                 direct   : 'right'

@@ -12,11 +12,13 @@
     width: 100%;
     height: 100%;
     background-color: rgba(0,39,255,0.4);
-    z-index: 1;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-direction: column;
+    opacity: 0;
+    z-index: 0;
+    transition: 0.3s;
 }
 .main_foto{
     width: 80%;
@@ -34,58 +36,61 @@
 [class^="scroll_"]{
     position: absolute;
     z-index: 1;
-    background-color: rgba( 240, 248, 255, 0.9 );
+    background-color: rgba( 0, 0, 0, 0.4 );
     opacity: 0;
     transition: 0.3s;
     display: flex;
-    font-size: 200%;
+    font-size: 300%;
     border-radius: 10px;
     cursor: pointer;
+    color: gold;
 }
 [class^="scroll_"]:hover{
     opacity: 1;
 }
 .scroll_left{
-    top: 20%;
+    top: 25%;
     left: 2%;
-    width: 10%;
-    height: 60%;
+    width: 7%;
+    height: 50%;
     align-items: center;
     justify-content: center;
-}
-.scroll_left:before{
-    content: 'left';
 }
 .scroll_right{
-    top: 20%;
+    top: 25%;
     right: 2%;
-    width: 10%;
-    height: 60%;
+    width: 7%;
+    height: 50%;
     align-items: center;
     justify-content: center;
-}
-.scroll_right:before{
-    content: 'right';
 }
 .scroll_top{
     top: 2%;
-    right: 20%;
-    width: 60%;
-    height: 15%;
+    right: 25%;
+    width: 50%;
+    height: 10%;
     align-items: center;
     justify-content: center;
-}
-.scroll_top:before{
-    content: 'top';
 }
 .scroll_down{
     bottom: 2%;
-    right: 20%;
-    width: 60%;
-    height: 15%;
+    right: 25%;
+    width: 50%;
+    height: 10%;
     align-items: center;
     justify-content: center;
 }
-.scroll_down:before{
-    content: 'down';
+.close_main_foto{
+    position: absolute;
+    z-index: 3;
+    top: 3vh;
+    right: 2vw;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 2em;
+    padding: 5px 10px;
+    color: gold;
+    background-color: rgba( 0, 0, 0, 0.4 );
+    box-shadow: 0px 0px 7px 1px gold;
+    transition: 0.2s;
 }

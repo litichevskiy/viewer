@@ -37,7 +37,7 @@
 
     })();
 
-    storage.createList( 200 );
+    storage.createList( 100 );
 
     exports.storage = storage;
 

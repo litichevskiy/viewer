@@ -1,11 +1,10 @@
 (function( exports ) {
 
-    function ScrollElement( container, className ) {
+    function ScrollElement( container, className, text ) {
 
-        this.button = document.createElement('div');
-        this.button.classList.add( className );
+        this.button = $('<div class="'+className+'">'+text+'</div>');
 
-        container.appendChild( this.button );
+        $(container).append( this.button );
 
     };
 

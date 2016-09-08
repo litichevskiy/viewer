@@ -65,14 +65,19 @@
                 From = that.lastID;
                 this.lastID += data.quantity, this.firstID += data.quantity;
                 id = 0, fromPositinon = data.quantity;//
+                this.pubsub.publish('history_true');
 
             } else{
 
-                if( this.firstID <= 0 ) return;
+                if( this.firstID <= 0 ) {
+                    this.pubsub.publish('history_false');
+                    return;
+                }
 
                 this.lastID -= data.quantity, this.firstID -= data.quantity;
                 From = that.firstID;
                 id = data.quantity - 1, fromPositinon = 0;
+                this.pubsub.publish('new_img_true');
             }
 
         storageAPI.getData( data.quantity, From )
@@ -80,7 +85,10 @@
 
             response = response || [];
 
-            if( response.length < 1 ) return;
+            if( response.length < 1 ) {
+                that.pubsub.publish('new_img_false');
+                return;
+            }
 
             response.forEach( function( item, i ) {
 
@@ -111,14 +119,19 @@
             From = that.lastID;
             this.lastID += data.quantity, this.firstID += data.quantity;
             id = 0, fromPositinon = data.quantity;
+            this.pubsub.publish('history_true');
 
         } else{
 
-            if( this.firstID <= 0 ) return;
+            if( this.firstID <= 0 ) {
+                this.pubsub.publish('history_false');
+                return;
+            }
 
             this.lastID -= data.quantity, this.firstID -= data.quantity;
             From = this.firstID;
             id = data.quantity - 1, fromPositinon = 0;
+            this.pubsub.publish('new_img_true');
         }
 
         storageAPI.getData( data.quantity, From )
@@ -126,7 +139,10 @@
 
             response = response || [];
 
-            if( response.length < 1 ) return;
+            if( response.length < 1 ) {
+                that.pubsub.publish('new_img_false');
+                return;
+            }
 
             response.forEach( function( item, i ) {
 
