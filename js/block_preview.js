@@ -46,7 +46,7 @@
             }
         });
 
-        this.pubsub.subscribe('init_preview', this.createPreview.bind( this, data.list ));
+        this.pubsub.subscribe('init_preview', this.createFieldPreview.bind( this, data.list ));
         this.pubsub.subscribe('active_preview', this.changeActivePreview.bind( this ));
         this.pubsub.subscribe('last_left', this.addAndRemoveCells.bind( this ));
         this.pubsub.subscribe('last_right', this.addAndRemoveCells.bind( this ));
@@ -76,6 +76,8 @@
                 From = that.firstID;
                 id = data.quantity - 1, fromPositinon = 0;
                 this.pubsub.publish('new_img_true');
+
+                if( this.firstID === 0 ) this.pubsub.publish('history_false');
             }
 
         storageAPI.getData( data.quantity, From )
@@ -119,6 +121,8 @@
 
             this.coordActiveCell = coord;
 
+            this.pubsub.publish('main_foto', $(this.activePreview.children[0]).html() );
+
         } else {
 
             this.activePreview = this.storageCells[coord.x][coord.y];
@@ -127,18 +131,21 @@
         }
     };
 
-    BlockPreview.fn.createPreview = function( list, data ) {
+    BlockPreview.fn.createFieldPreview = function( list, data ) {
 
-        this.widthCells = Math.floor( WIDTH_SCREEN / data.cells );
-        this.heightCells = Math.floor( HEIGHT_SCREEN / data.rows  );
-        this.lastID = 0;
+        list = list || [];
 
         var fragment = document.createDocumentFragment(),
-            marginLeft = ( WIDTH_SCREEN - (this.widthCells * data.cells)) / data.cells,
-            marginTop = ( HEIGHT_SCREEN - (this.heightElement * data.rows)) / data.rows,
+            params = getParamsPreview( data ),
+            marginLeft = params.marginLeft,
+            marginTop = params.marginTop,
 
             rowsElement, arrayCell,
             cellElement, x, y;
+
+            this.lastID = 0;
+            this.widthCells = params.width;
+            this.heightCells = params.height;
 
         for ( x = 0; x < data.rows; x++ ) {
 
@@ -192,23 +199,18 @@
 
     function searchActiveElement( list, target ) {
 
-        var row, i, k;
+        var index, i;
 
         for( i = 0; i < list.length; i++ ) {
 
-            row = list[i];
+            index = list[i].indexOf( target );
 
-            for( k = 0; k < row.length; k++ ) {
+            if( index === -1 ) continue;
 
-                if( row[k] === target ) {
-
-                    return{
-                        element : target,
-                        coord:{ x : i, y : k }
-                    };
-
-                }
-            }
+            return {
+                element : target,
+                coord:{ x : i, y : index }
+            };
         }
 
         return target;
@@ -220,6 +222,22 @@
         this.pubsub.publish('new_coordinates', data.coord );
         this.pubsub.publish('set_main_foto', $(data.element.children[0]).html() );
         this.changeActivePreview( data.coord );
+    };
+
+    function getParamsPreview( data ) {
+
+        var width = Math.floor( WIDTH_SCREEN / data.cells ),
+            height = Math.floor( HEIGHT_SCREEN / data.rows  ),
+            marginLeft = ( WIDTH_SCREEN - ( width * data.cells )) / data.cells,
+            marginTop = ( HEIGHT_SCREEN - ( height * data.rows )) / data.rows;
+
+        return {
+
+            width      : width,
+            height     : height,
+            marginLeft : marginLeft,
+            marginTop  : marginTop
+        }
     };
 
     exports.BlockPreview = BlockPreview;

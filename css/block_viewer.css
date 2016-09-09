@@ -48,23 +48,40 @@
     -webkit-user-select: none;
     -ms-user-select: none;
     -o-user-select: none;
-
 }
 .scroll_left{
-    top: 42.5%;
+    top: 43.5%;
     left: 2%;
     width: 7%;
-    height: 15%;
+    height: 12%;
     align-items: center;
     justify-content: center;
 }
 .scroll_right{
-    top: 42.5%;
+    top: 43.5%;
     right: 2%;
     width: 7%;
-    height: 15%;
+    height: 12%;
     align-items: center;
     justify-content: center;
+}
+.scroll_right:hover:before{
+    position: absolute;
+    bottom: 5%;
+    left: 0;
+    width: 100%;
+    content: 'ctrl + \2192';
+    text-align: center;
+    font-size: 15px;
+}
+.scroll_left:hover:before{
+    position: absolute;
+    bottom: 5%;
+    left: 0;
+    width: 100%;
+    content: 'ctrl + \2190';
+    text-align: center;
+    font-size: 15px;
 }
 .close_main_foto{
     position: absolute;
