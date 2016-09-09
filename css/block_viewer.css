@@ -19,6 +19,7 @@
     opacity: 0;
     z-index: 0;
     transition: 0.3s;
+    cursor: pointer;
 }
 .main_foto{
     width: 80%;
@@ -44,30 +45,34 @@
     cursor: pointer;
     color: gold;
     padding-bottom: 5px;
+    opacity: 0.3;
     -moz-user-select: none;
     -webkit-user-select: none;
     -ms-user-select: none;
     -o-user-select: none;
 }
+[class^="scroll_"]:hover{
+    opacity: 1;
+}
 .scroll_left{
     top: 43.5%;
     left: 2%;
-    width: 7%;
-    height: 12%;
+    width: 1.7em;
+    height: 1.5em;
     align-items: center;
     justify-content: center;
 }
 .scroll_right{
     top: 43.5%;
     right: 2%;
-    width: 7%;
-    height: 12%;
+    width: 1.7em;
+    height: 1.5em;
     align-items: center;
     justify-content: center;
 }
 .scroll_right:hover:before{
     position: absolute;
-    bottom: 5%;
+    bottom: 2%;
     left: 0;
     width: 100%;
     content: 'ctrl + \2192';
@@ -76,7 +81,7 @@
 }
 .scroll_left:hover:before{
     position: absolute;
-    bottom: 5%;
+    bottom: 2%;
     left: 0;
     width: 100%;
     content: 'ctrl + \2190';

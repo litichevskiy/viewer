@@ -1,9 +1,6 @@
 (function( exports ) {
 
     const
-        ESC = 27, // keyCode
-        DIRECT_UP = 'up',
-        DIRECT_DOWN = 'down',
         DIRECT_LEFT = 'left',
         DIRECT_RIGHT = 'right';
 
@@ -28,35 +25,9 @@
 
         var that = this;
 
-        $(this.leftScroll).click(function( event ) {
-            that.pubsub.publish('last_left',{
-                quantity : that.rows,
-                direct   : DIRECT_LEFT
-            });
-        });
-
-        $(this.rightScroll).click(function( event ) {
-            that.pubsub.publish('last_right',{
-                quantity : that.rows,
-                direct   : DIRECT_RIGHT
-            });
-        });
-
-        $(document).keydown(function(event) {
-
-            if( event.ctrlKey && event.keyCode === 39 ) {
-                that.pubsub.publish('last_right',{
-                    quantity : that.rows,
-                    direct   : DIRECT_RIGHT
-                });
-            } else
-                if( event.ctrlKey && event.keyCode === 37 ) { // left
-                    that.pubsub.publish('last_left',{
-                        quantity : that.rows,
-                        direct   : DIRECT_LEFT
-                    });
-                }
-        });
+        $(this.leftScroll).click( clickButtonScroll.bind( this ));
+        $(this.rightScroll).click( clickButtonScroll.bind( this ));
+        $(this.close).on('transitionend', changeRotate.bind(null, this.close));
 
         this.layer[0].addEventListener('click',function( event ) {
 
@@ -69,24 +40,9 @@
             }
         });
 
-        $(this.close).on('transitionend', changeRotate.bind(null, this.close));
-
         $( this.close ).click( function( event ) {
 
-            $(this).css({ 'transform' : 'rotate(90deg)' });
-
             that.hideMainFoto();
-        });
-
-        $(document).keydown( function( event ) {
-            if( event.keyCode === ESC ){
-                if( that.flagMainFoto ){
-
-                    $(that.close).css({ 'transform' : 'rotate(90deg)' });
-
-                    that.hideMainFoto();
-                }
-            }
         });
 
         this.pubsub.subscribe('set_main_foto', this.showMainFoto.bind( this ));
@@ -95,7 +51,19 @@
         this.pubsub.subscribe('history_true', this.showScrollHistory.bind( this ));
         this.pubsub.subscribe('new_img_false', this.hideScrollAdd.bind( this ));
         this.pubsub.subscribe('new_img_true', this.showScrollAdd.bind( this ));
-        this.pubsub.subscribe('main_foto', this.setMainFoto.bind( this ));//
+        this.pubsub.subscribe('main_foto', this.setMainFoto.bind( this ));
+        this.pubsub.subscribe('close_main_foto', this.hideMainFoto.bind( this ));
+    };
+
+    function clickButtonScroll( event ) {
+        var direct = 'right';
+
+        if( event.target === this.leftScroll[0] ) direct = 'left';
+
+        this.pubsub.publish('last',{
+            quantity : this.rows,
+            direct   : direct
+        });
     };
 
     BlockViewer.fn = BlockViewer.prototype;
@@ -135,10 +103,15 @@
 
     BlockViewer.fn.hideMainFoto = function() {
 
+        if( !this.flagMainFoto ) return;
+
+        $(this.close).css({ 'transform' : 'rotate(90deg)' });
+
         $(this.layer).css({
             'opacity' : '0',
             'z-index' : '0'
         });
+
         this.flagMainFoto = false;
     };
 

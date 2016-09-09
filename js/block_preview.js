@@ -48,8 +48,7 @@
 
         this.pubsub.subscribe('init_preview', this.createFieldPreview.bind( this, data.list ));
         this.pubsub.subscribe('active_preview', this.changeActivePreview.bind( this ));
-        this.pubsub.subscribe('last_left', this.addAndRemoveCells.bind( this ));
-        this.pubsub.subscribe('last_right', this.addAndRemoveCells.bind( this ));
+        this.pubsub.subscribe('last', this.addAndRemoveCells.bind( this ));
     };
 
     BlockPreview.fn = BlockPreview.prototype;

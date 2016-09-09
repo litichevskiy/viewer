@@ -6,7 +6,8 @@
         UP    = 38, // keyCode
         DOWN  = 40, // keyCode
         RIGHT = 39, // keyCode
-        LEFT  = 37; // keyCode
+        LEFT  = 37, // keyCode
+        ESC   = 27; // keyCode
 
     function PreviewEmulator( data ) {
 
@@ -39,26 +40,26 @@
         $(document).keydown(function(event) {
             var code = event.keyCode;
 
-            if ( code === UP ) {
-                that.changeActiveElement(
-                    UP, that.coordActiveCell, minUp
-                );
-            } else
-                if ( code === DOWN  ) {
-                    that.changeActiveElement(
-                        DOWN, that.coordActiveCell, maxDowm
-                    );
-                } else
-                    if ( code === LEFT  ) {
-                        that.changeActiveElement(
-                            LEFT, that.coordActiveCell, minLeft
-                        );
-                    } else
-                        if ( code === RIGHT ) {
-                            that.changeActiveElement(
-                                RIGHT, that.coordActiveCell, maxRight
-                            );
-                        }
+            if ( code === UP )
+                return that.changeActiveElement( UP, that.coordActiveCell, minUp );
+
+            if ( code === DOWN  )
+                return that.changeActiveElement( DOWN, that.coordActiveCell, maxDowm );
+
+            if ( !event.ctrlKey && code === LEFT )
+                return that.changeActiveElement( LEFT, that.coordActiveCell, minLeft );
+
+            if ( !event.ctrlKey && code === RIGHT )
+                return that.changeActiveElement( RIGHT, that.coordActiveCell, maxRight );
+
+            if ( event.ctrlKey && code === RIGHT )
+                return that.pubsub.publish('last',{quantity:that.rows, direct:'right'});
+
+            if ( event.ctrlKey && code === LEFT )
+                return that.pubsub.publish('last',{quantity:that.rows, direct:'left'});
+
+            if( code === ESC )
+                return that.pubsub.publish('close_main_foto');
         });
     };
 
@@ -70,53 +71,49 @@
         this.coordActiveCell.y = coord.y;
     };
 
+    var changeCoord = (function() {
+        var coord = {
+
+            'up'    : function( data ) { data.x -= 1; return data },
+            'down'  : function( data ) { data.x += 1; return data },
+            'left'  : function( data ) { data.y -= 1; return data },
+            'right' : function( data ) { data.y += 1; return data }
+        };
+
+        return function( direct, data, eventName ) {
+            var newData;
+
+            newData = coord[direct]( data );
+            this.pubsub.publish( eventName, newData );
+        }
+
+    })();
+
     PreviewEmulator.fn.changeActiveElement = function( direct, data, value ) {
-
-        if ( direct === UP ) {
-
-            if( data.x > value ){
-                data.x -= 1 ,this.pubsub.publish('active_preview',data);
-            }
-
-        } else
-
-            if ( direct === DOWN ) {
-
-                if( data.x < value ) {
-                    data.x += 1 ,this.pubsub.publish('active_preview',data);
-                }
+        if ( direct === UP && data.x > value ) {
+            changeCoord.call( this, 'up', data, 'active_preview' );
+        }
+        else
+            if ( direct === DOWN && data.x < value ) {
+                changeCoord.call( this, 'down', data, 'active_preview' );
             }
             else
-
-                if ( direct === LEFT ) {
-
-                    if( data.y > value ) {
-                        data.y -= 1, this.pubsub.publish('active_preview',data);
-                    }
-                    else{
-
-                        this.pubsub.publish('last_right', {
-                            quantity : this.rows,
-                            direct   : 'left'
-                        });
-                    }
+                if ( direct === LEFT && data.y > value ) {
+                        changeCoord.call( this, 'left', data, 'active_preview' );
                 }
                 else
+                    if ( direct === RIGHT && data.y < value ) {
+                            changeCoord.call( this, 'right', data, 'active_preview' );
+                    }
+                    else
+                        if( direct === LEFT || direct === RIGHT ) {
+                            var dir = ( direct === LEFT ) ? dir ='left' : dir = 'right';
 
-                    if ( direct === RIGHT ) {
-
-                        if( data.y < value ) {
-                            data.y += 1, this.pubsub.publish('active_preview',data);
-                        }
-                        else{
-
-                            this.pubsub.publish('last_left', {
+                            this.pubsub.publish('last', {
                                 quantity : this.rows,
-                                direct   : 'right'
+                                direct   : dir
                             });
                         }
-                    }
-
     };
 
     PreviewEmulator.fn.createField = function() {
