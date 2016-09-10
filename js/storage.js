@@ -8,7 +8,7 @@
 
             createList : function( lengthArray ) {
 
-                lengthArray = lengthArray || 100;
+                lengthArray = lengthArray || 0;
 
                 for( var i = 0; i < lengthArray; i++ ) {
 
@@ -37,7 +37,7 @@
 
     })();
 
-    storage.createList( 300 );
+    storage.createList( 600 );
 
     exports.storage = storage;
 

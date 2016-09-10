@@ -56,14 +56,13 @@
     };
 
     function clickButtonScroll( event ) {
-        var direct = 'right';
+        var eventName = 'click_right',
+            direct = 'right';
 
-        if( event.target === this.leftScroll[0] ) direct = 'left';
+        if( event.target === this.leftScroll[0] )
+            direct = 'left', eventName = 'click_left';
 
-        this.pubsub.publish('last',{
-            quantity : this.rows,
-            direct   : direct
-        });
+        this.pubsub.publish(eventName, direct );
     };
 
     BlockViewer.fn = BlockViewer.prototype;

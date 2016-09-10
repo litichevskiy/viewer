@@ -46,67 +46,96 @@
             }
         });
 
-        this.pubsub.subscribe('init_preview', this.createFieldPreview.bind( this, data.list ));
+        this.pubsub.subscribe('init_preview', this.createFieldPreview.bind( this ));
         this.pubsub.subscribe('active_preview', this.changeActivePreview.bind( this ));
-        this.pubsub.subscribe('last', this.addAndRemoveCells.bind( this ));
+        this.pubsub.subscribe('last_right', this.addNewImg.bind( this ));
+        this.pubsub.subscribe('last_left', this.addHistoryImg.bind( this ));
     };
 
     BlockPreview.fn = BlockPreview.prototype;
 
-    BlockPreview.fn.addAndRemoveCells = function( data ) {
+    BlockPreview.fn.addNewImg = function( data ) {
         var that = this,
-            elem, From, id, list, cashRow, fromPositinon;
+            lengthCells = that.storageCells.length,
+            length, elem;
 
-            if( data.direct === 'right' ) {
+        storageAPI.getData( data.quantity, this.lastID )
+        .then( function( response ) {
 
-                From = that.lastID;
-                this.lastID += data.quantity, this.firstID += data.quantity;
-                id = 0, fromPositinon = data.quantity;//
-                this.pubsub.publish('history_true');
+            response = response || [];
 
-            } else{
+            length = response.length;
 
-                if( this.firstID <= 0 ) {
-                    this.pubsub.publish('history_false');
-                    return;
-                }
+            if( length < 1 ) return that.pubsub.publish('new_img_false');
 
-                this.lastID -= data.quantity, this.firstID -= data.quantity;
-                From = that.firstID;
-                id = data.quantity - 1, fromPositinon = 0;
-                this.pubsub.publish('new_img_true');
+            for( var i = 0, x = 0, y = 0; i < length; i++ ) {
+                elem = createCell.call( that, response[i] );
 
-                if( this.firstID === 0 ) this.pubsub.publish('history_false');
+                that.storageRows[y].removeChild( that.storageCells[y][x] );
+                that.storageRows[y].appendChild( elem );
+
+                that.storageCells[y].splice( x, 1 );
+                that.storageCells[y].push( elem );
+                y++;
+
+                if( y === lengthCells ) y = 0;//, x++;
             }
+
+            that.lastID = that.lastID + response.length;
+            that.firstID = that.firstID + response.length;
+
+            that.pubsub.publish('history_true');
+            that.changeActivePreview( that.coordActiveCell );
+        })
+        .fail( function( err ) {
+
+        });
+    };
+
+    BlockPreview.fn.addHistoryImg = function( data ) {
+        var that = this,
+            lengthCells = that.storageCells[0].length - 1,
+            From = this.firstID - data.quantity,
+            length, elem;
+
+        if( From < 0 ) data.quantity = this.firstID, From = 0;
+        if( this.firstID === 0 ) return this.pubsub.publish('history_false');
 
         storageAPI.getData( data.quantity, From )
         .then( function( response ) {
 
             response = response || [];
 
-            if( response.length < 1 ) {
-                that.pubsub.publish('new_img_false');
-                return;
+            length = response.length;
+
+            response = response.reverse();
+
+            if( length < 1 ) return that.pubsub.publish('new_img_false');
+
+            for( var i = 0, x = lengthCells, y = 0; i < length; i++ ) {
+                elem = createCell.call( that, response[i] );
+                var parent = that.storageRows[y];
+                var child = that.storageCells[y][x];
+                that.storageRows[y].removeChild( that.storageCells[y][x] );
+                that.storageRows[y].insertAdjacentElement('afterBegin', elem );
+
+                that.storageCells[y].splice( x, 1 );
+                that.storageCells[y].splice( 0, 0, elem );
+                y++;
+
+                if( y > that.storageRows.length - 1 ) y = 0;//, x--;
             }
 
-            response.forEach( function( item, i ) {
+            that.firstID -= length
+            that.lastID -= length;
 
-                elem = createCell.call( that, item );
-
-                that.storageRows[i].removeChild( that.storageCells[i][id] );
-
-                if( data.direct === 'right' ) that.storageRows[i].appendChild( elem );
-                else that.storageRows[i].insertAdjacentElement('afterBegin', elem );
-
-                that.storageCells[i].splice( id, 1 );
-                that.storageCells[i].splice( fromPositinon, 0, elem );
-            });
+            if( that.firstID <= 0 )that.pubsub.publish('history_false');
 
             that.changeActivePreview( that.coordActiveCell );
         })
         .fail( function( err ) {
 
-        })
+        });
     };
 
     BlockPreview.fn.changeActivePreview = function( coord ) {
@@ -130,44 +159,32 @@
         }
     };
 
-    BlockPreview.fn.createFieldPreview = function( list, data ) {
-
-        list = list || [];
+    BlockPreview.fn.createFieldPreview = function( data ) {
 
         var fragment = document.createDocumentFragment(),
             params = getParamsPreview( data ),
-            marginLeft = params.marginLeft,
-            marginTop = params.marginTop,
 
-            rowsElement, arrayCell,
-            cellElement, x, y;
+            rowsElement, cellElement;
 
             this.lastID = 0;
             this.widthCells = params.width;
             this.heightCells = params.height;
 
-        for ( x = 0; x < data.rows; x++ ) {
+        for( var i = 0; i < data.rows; i++ ) {
 
             rowsElement = createRow.call( this );
-
+            $(fragment).append( rowsElement[0] );
             this.storageRows.push( rowsElement[0] );
+            this.storageCells.push( [] );
+        };
 
-            arrayCell = [];
+        for( var x = 0, y = 0; this.lastID < data.list.length; this.lastID++ ) {
 
-            for ( y = 0; y < data.cells; y++ ) {
-
-                cellElement = createCell.call( this, list[this.lastID] );
-
-                $(rowsElement).append(cellElement);
-
-                arrayCell.push( $(cellElement)[0] );
-
-                this.lastID++;
-            }
-
-            $(fragment).append( rowsElement );
-
-            this.storageCells.push( arrayCell );
+            cellElement = createCell.call( this, data.list[this.lastID] );
+            this.storageCells[y].push( cellElement );
+            this.storageRows[y].appendChild( cellElement );
+            y++;
+            if( y === data.rows ) y = 0;
         }
 
         $(this.container).append( fragment );

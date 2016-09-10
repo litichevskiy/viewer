@@ -12,18 +12,24 @@
     function PreviewEmulator( data ) {
 
         if ( !data.pubsub ) throw('module require PubSub');
+        if ( data.list.length === 0 ) throw('not photo');// user info
 
         this.pubsub = data.pubsub;
         this.listCoord = [];
         this.rows  = data.rows  || DEFOULT_ROWS;
         this.cells = data.cells || DEFOULT_CELLS;
 
-        this.createField();
+        if( data.load > 1 && data.load < this.cells + 1 ) this.quantity = this.rows * data.load;
+        else this.quantity = this.rows;
+
+        data.list = this.createField( data.list );
         this.coordActiveCell = getRandomCell( this.rows, this.cells );
 
         this.pubsub.publish('init_preview', {
             rows  : this.rows,
-            cells : this.cells
+            cells : this.cells,
+            list  : data.list
+
         });
 
         this.pubsub.publish('active_preview',{
@@ -32,6 +38,8 @@
         });
 
         this.pubsub.subscribe('new_coordinates', this.setCoordinates.bind( this ));
+        this.pubsub.subscribe('click_left', this.publishEventClick.bind( this ));
+        this.pubsub.subscribe('click_right', this.publishEventClick.bind( this ));
 
         var that = this,
             minUp = 0, maxDowm = this.rows - 1,
@@ -53,10 +61,10 @@
                 return that.changeActiveElement( RIGHT, that.coordActiveCell, maxRight );
 
             if ( event.ctrlKey && code === RIGHT )
-                return that.pubsub.publish('last',{quantity:that.rows, direct:'right'});
+                return that.pubsub.publish('last_right',{ quantity:that.quantity });
 
             if ( event.ctrlKey && code === LEFT )
-                return that.pubsub.publish('last',{quantity:that.rows, direct:'left'});
+                return that.pubsub.publish('last_left',{ quantity:that.quantity });
 
             if( code === ESC )
                 return that.pubsub.publish('close_main_foto');
@@ -64,6 +72,15 @@
     };
 
     PreviewEmulator.fn = PreviewEmulator.prototype;
+
+    PreviewEmulator.fn.publishEventClick = function( str ) {
+        var eventName;
+
+        if( str === 'right' ) eventName = 'last_right';
+        if( str === 'left'  ) eventName = 'last_left';
+
+        this.pubsub.publish( eventName, { quantity:this.quantity }) ;
+    };
 
     PreviewEmulator.fn.setCoordinates = function( coord ) {
 
@@ -108,29 +125,37 @@
                     else
                         if( direct === LEFT || direct === RIGHT ) {
                             var dir = ( direct === LEFT ) ? dir ='left' : dir = 'right';
+                            var eventName = ( direct === LEFT ) ?
+                                eventName = 'last_left' : eventName = 'last_right';
 
-                            this.pubsub.publish('last', {
-                                quantity : this.rows,
-                                direct   : dir
+                            this.pubsub.publish( eventName, {
+                                quantity : this.quantity
                             });
                         }
     };
 
-    PreviewEmulator.fn.createField = function() {
+    PreviewEmulator.fn.createField = function( data ) {
 
-        var list, x, y;
+        if( this.rows * this.cells > data.length ) {
 
-        for( x = 0; x < this.rows; x++ ) {
+            getNewField.call( this, data );
 
-            list = [];
-
-            for( y = 0; y < this.cells; y++ ) {
-
-                list.push({ coord_x : x,coord_y : y });
-            }
-
-            this.listCoord.push( list );
+            data = data.splice( 0, this.rows * this.cells );
         }
+
+        for( var i = 0; i < this.rows; i++ ) {
+
+            this.listCoord.push( [] );
+        }
+
+        for( var y = 0, x = 0, count = 0; count < data.length; count++ ) {
+
+            this.listCoord[y].push({ coord_x : x, coord_y : y, elem : data[count] });
+            y++;
+            if( y === this.rows ) y = 0, x++;
+        }
+
+        return data;
     };
 
     function getRandomCell( rows, cells ) {
@@ -141,6 +166,33 @@
         coord.y = Math.floor( Math.random() * cells );
 
         return coord;
+    };
+
+    function getNewField( list ) {
+
+        if( list.length <= 3 ) {
+
+            if( list.length === 1 ) return this.rows = 1, this.cells = 1;
+
+            else this.rows = 1, this.cells = 2;
+        }
+
+        while( this.rows > 2 ) {
+
+            this.rows -= 1;
+            ( this.cells > 3 ) ? this.cells -= 1 : this.cells = this.cells;
+
+            if( this.rows * this.cells > list.length ) continue;
+            else return;
+        };
+
+        while( this.rows === 2 ) {
+
+            this.cells -= 1;
+
+            if( this.rows * this.cells > list.length ) continue;
+            else return;
+        };
     };
 
     exports.PreviewEmulator = PreviewEmulator;

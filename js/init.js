@@ -12,10 +12,10 @@
 
             var pubsub = new PubSub(),
 
+
             blockPreview = new BlockPreview({
                 container : data.container,
-                pubsub    : pubsub,
-                list      : response
+                pubsub    : pubsub
             }),
 
             blockViewer = new BlockViewer({
@@ -26,8 +26,11 @@
             previewEmulator = new PreviewEmulator({
                 pubsub : pubsub,
                 cells  : data.cells,
-                rows   : data.rows
+                rows   : data.rows,
+                list   : response,
+                load   : data.load
             });
+
         })
         .fail( function( error ){
             throw(error);
