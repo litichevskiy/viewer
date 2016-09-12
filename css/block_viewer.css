@@ -21,10 +21,23 @@
     transition: 0.3s opacity;
     cursor: pointer;
 }
+.layer_main:after{
+    content: 'loading';
+    font-family: monospace;
+    color: rgb(58, 61, 220);
+    font-size: 300%;
+}
 .main_foto{
+    transition: 0.2s;
     max-width: 100%;
     max-height: 100%;
     object-fit: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
 }
 .hide_block{
     display: none;

@@ -1,10 +1,11 @@
 (function( exports, storageAPI ) {
 
     const
-        WIDTH_SCREEN = 99, // percent
-        HEIGHT_SCREEN = 99, // percent
         CLASS_ACTIVE_PREVIEW = 'active_preview',
-        ENTER = 13; //keyCode
+        WIDTH_SCREEN = 99,    // percent
+        HEIGHT_SCREEN = 99,   // percent
+        TIME_ANITATION = 0, // ms
+        ENTER = 13;           //keyCode
 
     function BlockPreview( data ) {
 
@@ -65,13 +66,14 @@
             response = response || [];
 
             length = response.length;
-            debugger
+
             if( length < 1 ) return that.pubsub.publish('new_img_false');
 
             for( var i = 0, x = 0, y = 0; i < length; i++ ) {
 
                 elem = that.storageRows[y].removeChild( that.storageCells[y][x] );
                 img = $(elem).find('img')[0];
+                $(img).css({'opacity':'0'});
                 img.src = response[i]['small'];
                 that.storageRows[y].appendChild( elem );
                 that.storageCells[y].splice( x, 1 );
@@ -114,6 +116,7 @@
 
                 elem = that.storageRows[y].removeChild( that.storageCells[y][x] );
                 img = $(elem).find('img')[0];
+                $(img).css({'opacity':'0'});
                 img.src = response[i]['small'];
                 that.storageRows[y].insertAdjacentElement('afterBegin', elem );
                 that.storageCells[y].splice( x, 1 );
@@ -191,10 +194,18 @@
 
         var preview = $(
             '<div class="cell_previe">'+
-                '<img  src="'+path+'"class="preview">'+
                 '<div class="layer_preview"></div>'+
             '</div>'
         );
+
+        var img = $('<img  src="'+path+'"class="preview">')
+
+        $(img).on('load', function() {
+
+            $(this).animate({'opacity':'1'}, TIME_ANITATION );
+        });
+
+        $(preview).append(img)
 
         $(preview).css({ 'width' : this.widthCells + 'vw' });
 

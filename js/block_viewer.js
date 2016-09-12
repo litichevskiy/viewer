@@ -2,7 +2,8 @@
 
     const
         DIRECT_LEFT = 'left',
-        DIRECT_RIGHT = 'right';
+        DIRECT_RIGHT = 'right',
+        TIME_ANITATION = 200; // ms
 
     function BlockViewer( data ) {
 
@@ -24,6 +25,11 @@
         this.hideScrollHistory();
 
         var that = this;
+
+        $(this.mainFoto).on('load', function() {
+
+            $(this).animate({'opacity':'1'}, TIME_ANITATION );
+        });
 
         $(this.leftScroll).click( clickButtonScroll.bind( this ));
         $(this.rightScroll).click( clickButtonScroll.bind( this ));
@@ -73,6 +79,8 @@
 
         path = path.replace('small', 'big');
 
+        $(this.mainFoto).css({'opacity':0});
+
         $(this.mainFoto)[0].src = path;
     };
 
@@ -108,10 +116,10 @@
 
         $(this.close).css({ 'transform' : 'rotate(90deg)' });
 
-        $(this.layer).css({
+        $(this.layer).animate({
             'opacity' : '0',
-            'z-index' : '-1'
-        });
+            'z-index' : '0'
+        }, TIME_ANITATION );
 
         this.flagMainFoto = false;
     };
