@@ -10,7 +10,7 @@
 
         this.pubsub = data.pubsub;
         this.container = data.container;
-        this.mainFoto = $('<div class="main_foto"></div>');
+        this.mainFoto = $('<img class="main_foto">');
         this.layer = $('<div class="layer_main"></div>');
         this.close = $('<div class="close_main_foto">&#10006;</div>')
         $(this.layer).append( this.close );
@@ -67,11 +67,13 @@
 
     BlockViewer.fn = BlockViewer.prototype;
 
-    BlockViewer.fn.setMainFoto = function( data ) {
+    BlockViewer.fn.setMainFoto = function( path ) {
 
         if( !this.flagMainFoto ) return;
 
-        $(this.mainFoto).html( data );
+        path = path.replace('small', 'big');
+
+        $(this.mainFoto)[0].src = path;
     };
 
     BlockViewer.fn.hideScrollHistory = function() {
@@ -108,15 +110,13 @@
 
         $(this.layer).css({
             'opacity' : '0',
-            'z-index' : '0'
+            'z-index' : '-1'
         });
 
         this.flagMainFoto = false;
     };
 
-    BlockViewer.fn.showMainFoto = function( data ) {
-
-        $(this.mainFoto).html( data );
+    BlockViewer.fn.showMainFoto = function() {
 
         $(this.layer).css({
             'opacity' : '1',

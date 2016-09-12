@@ -2,7 +2,7 @@
 
     initPreview({
         container : document.querySelector('.container_viewer'),
-        rows      : 5,
+        rows      : 4,
         cells     : 5,
         load      : 1
     });

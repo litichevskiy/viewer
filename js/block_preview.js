@@ -57,7 +57,7 @@
     BlockPreview.fn.addNewImg = function( data ) {
         var that = this,
             lengthCells = that.storageCells.length,
-            length, elem;
+            length, elem, img;
 
         storageAPI.getData( data.quantity, this.lastID )
         .then( function( response ) {
@@ -65,20 +65,20 @@
             response = response || [];
 
             length = response.length;
-
+            debugger
             if( length < 1 ) return that.pubsub.publish('new_img_false');
 
             for( var i = 0, x = 0, y = 0; i < length; i++ ) {
-                elem = createCell.call( that, response[i] );
 
-                that.storageRows[y].removeChild( that.storageCells[y][x] );
+                elem = that.storageRows[y].removeChild( that.storageCells[y][x] );
+                img = $(elem).find('img')[0];
+                img.src = response[i]['small'];
                 that.storageRows[y].appendChild( elem );
-
                 that.storageCells[y].splice( x, 1 );
                 that.storageCells[y].push( elem );
                 y++;
 
-                if( y === lengthCells ) y = 0;//, x++;
+                if( y === lengthCells ) y = 0;
             }
 
             that.lastID = that.lastID + response.length;
@@ -108,22 +108,19 @@
 
             length = response.length;
 
-            response = response.reverse();
-
             if( length < 1 ) return that.pubsub.publish('new_img_false');
 
             for( var i = 0, x = lengthCells, y = 0; i < length; i++ ) {
-                elem = createCell.call( that, response[i] );
-                var parent = that.storageRows[y];
-                var child = that.storageCells[y][x];
-                that.storageRows[y].removeChild( that.storageCells[y][x] );
-                that.storageRows[y].insertAdjacentElement('afterBegin', elem );
 
+                elem = that.storageRows[y].removeChild( that.storageCells[y][x] );
+                img = $(elem).find('img')[0];
+                img.src = response[i]['small'];
+                that.storageRows[y].insertAdjacentElement('afterBegin', elem );
                 that.storageCells[y].splice( x, 1 );
                 that.storageCells[y].splice( 0, 0, elem );
                 y++;
 
-                if( y > that.storageRows.length - 1 ) y = 0;//, x--;
+                if( y > that.storageRows.length - 1 ) y = 0;
             }
 
             that.firstID -= length
@@ -149,7 +146,7 @@
 
             this.coordActiveCell = coord;
 
-            this.pubsub.publish('main_foto', $(this.activePreview.children[0]).html() );
+            this.pubsub.publish('main_foto', $(this.activePreview).find('img')[0].src );
 
         } else {
 
@@ -180,7 +177,7 @@
 
         for( var x = 0, y = 0; this.lastID < data.list.length; this.lastID++ ) {
 
-            cellElement = createCell.call( this, data.list[this.lastID] );
+            cellElement = createCell.call( this, data.list[this.lastID]['small'] );
             this.storageCells[y].push( cellElement );
             this.storageRows[y].appendChild( cellElement );
             y++;
@@ -190,11 +187,11 @@
         $(this.container).append( fragment );
     };
 
-    function createCell( content ) {
+    function createCell( path ) {
 
         var preview = $(
             '<div class="cell_previe">'+
-                '<div class="fake">'+content+'</div>'+
+                '<img  src="'+path+'"class="preview">'+
                 '<div class="layer_preview"></div>'+
             '</div>'
         );
