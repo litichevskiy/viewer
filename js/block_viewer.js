@@ -11,7 +11,7 @@
 
         this.pubsub = data.pubsub;
         this.container = data.container;
-        this.mainFoto = $('<img class="main_foto">');
+        this.mainFoto = $('<img class="main_foto" alt="">');
         this.layer = $('<div class="layer_main"></div>');
         this.close = $('<div class="close_main_foto">&#10006;</div>')
         $(this.layer).append( this.close );

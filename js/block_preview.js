@@ -198,7 +198,7 @@
             '</div>'
         );
 
-        var img = $('<img  src="'+path+'"class="preview">')
+        var img = $('<img  src="'+path+'"class="preview"> alt=""')
 
         $(img).on('load', function() {
 
